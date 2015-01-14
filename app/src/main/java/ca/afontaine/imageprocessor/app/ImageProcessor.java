@@ -6,19 +6,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class ImageSelctor extends ActionBarActivity {
+public class ImageProcessor extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_image_selctor);
+        setContentView(R.layout.activity_image_processor);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_image_selctor, menu);
+        getMenuInflater().inflate(R.menu.menu_image_processor, menu);
         return true;
     }
 
