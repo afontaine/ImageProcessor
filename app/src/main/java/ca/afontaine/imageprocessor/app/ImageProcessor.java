@@ -41,6 +41,10 @@ public class ImageProcessor extends Activity {
         switch (item.getItemId()) {
             case R.id.image:
                 setImage();
+                break;
+            case R.id.action_settings:
+                goToSettings();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -51,6 +55,12 @@ public class ImageProcessor extends Activity {
         intent.setAction(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
         startActivityForResult(intent, GET_IMAGE);
+    }
+
+    private void goToSettings() {
+        Intent intent = new Intent();
+        intent.setClass(this, SettingsActivity.class);
+        startActivity(intent);
     }
 
     @Override
