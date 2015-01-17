@@ -3,6 +3,7 @@ package ca.afontaine.imageprocessor.app;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,6 +52,7 @@ public class ImageProcessor extends Activity {
     }
 
     private void setImage() {
+        Log.d(TAG, "User is choosing image.");
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
@@ -58,6 +60,7 @@ public class ImageProcessor extends Activity {
     }
 
     private void goToSettings() {
+        Log.d(TAG, "User is going to settings.");
         Intent intent = new Intent();
         intent.setClass(this, SettingsActivity.class);
         startActivity(intent);
@@ -69,6 +72,7 @@ public class ImageProcessor extends Activity {
             return;
 
         if(requestCode == GET_IMAGE) {
+            Log.d(TAG, "User chose image " + data.getData());
             image.setImageURI(data.getData());
         }
     }

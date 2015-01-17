@@ -6,7 +6,7 @@
     <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
     <ListPreference
         android:key="filter_list"
-        android:title="@string/pref_title_add_friends_to_messages"
+        android:title="@string/pref_title_filter_type"
         android:defaultValue="-1"
         android:entries="@array/pref_list_types"
         android:entryValues="@array/pref_list_values"
@@ -15,7 +15,7 @@
     <!-- NOTE: EditTextPreference accepts EditText attributes. -->
     <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
     <EditTextPreference
-    android:key="filter_strength"
+    android:key="filter_size"
     android:title="@string/pref_title_mask_size"
     android:defaultValue="@string/pref_default_mask_size"
     android:selectAllOnFocus="true"
