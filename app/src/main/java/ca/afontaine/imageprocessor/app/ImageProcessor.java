@@ -1,13 +1,23 @@
 package ca.afontaine.imageprocessor.app;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 
 public class ImageProcessor extends Activity {
@@ -46,6 +56,9 @@ public class ImageProcessor extends Activity {
             case R.id.action_settings:
                 goToSettings();
                 break;
+            case R.id.action_apply_filter:
+                chooseFilter();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -74,6 +87,92 @@ public class ImageProcessor extends Activity {
         if(requestCode == GET_IMAGE) {
             Log.d(TAG, "User chose image " + data.getData());
             image.setImageURI(data.getData());
+            chooseFilter();
         }
+    }
+
+    private void chooseFilter() {
+        Log.d(TAG, "Ask for filter type.");
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.filter_dialog)
+                .setItems(R.array.pref_list_types, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String[] values = getResources().getStringArray(R.array.pref_list_values);
+                        SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putString("filter_list", values[which]);
+                        editor.apply();
+                        chooseFilterSize();
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        Log.d(TAG, "Dialog shown");
+    }
+
+    private void chooseFilterSize() {
+        Log.d(TAG, "Ask for filter size");
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        builder.setTitle("Filter Size")
+                .setView(inflater.inflate(R.layout.dialog_filter_size, null))
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int which) {
+                        Dialog dialog = (Dialog) dialogInterface;
+                        EditText text = (EditText) dialog.findViewById(R.id.filter_size);
+                        SharedPreferences pref = getPreferences(Context.MODE_PRIVATE);
+                        SharedPreferences.Editor edit = pref.edit();
+                        edit.putString("filter_size", text.getText().toString());
+                        edit.apply();
+                        applyFilter();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+        final AlertDialog dialog = builder.show();
+        EditText size = (EditText) dialog.findViewById(R.id.filter_size);
+        size.setText(getPreferences(MODE_PRIVATE).getString("filter_size", "1"));
+        size.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                try {
+                    int size = Integer.parseInt(s.toString());
+                    if(size % 2 == 0) {
+                        Toast.makeText(getApplicationContext(), "Size must be odd.", Toast.LENGTH_SHORT).show();
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                        return;
+                    }
+                }
+                catch(NumberFormatException e) {
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                    if(s.toString().isEmpty()) {
+                        return;
+                    }
+                    Toast.makeText(getApplicationContext(), "Size must be a number.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+            }
+        });
+    }
+
+    public void applyFilter() {
+        Log.d(TAG, "Apply filter");
     }
 }

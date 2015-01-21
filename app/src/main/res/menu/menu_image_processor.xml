@@ -6,6 +6,10 @@
             android:title="@string/action_settings"
             android:orderInCategory="100"
             android:showAsAction="never"/>
+      <item android:id="@+id/action_apply_filter"
+            android:title="@string/apply_filter"
+            android:orderInCategory="99"
+            android:showAsAction="never" />
       <item android:id="@+id/image"
             android:title="@string/image"
             android:orderInCategory="1"
