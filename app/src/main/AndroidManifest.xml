@@ -9,7 +9,8 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="ca.afontaine.imageprocessor.app.ImageProcessor"
-            android:label="@string/title_activity_image_processor" >
+            android:label="@string/title_activity_image_processor"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -102,7 +103,7 @@ public class ImageProcessor extends Activity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String[] values = getResources().getStringArray(R.array.pref_list_values);
-                        SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
+                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplication());
                         SharedPreferences.Editor editor = preferences.edit();
                         editor.putString("filter_list", values[which]);
                         editor.apply();
@@ -125,7 +126,7 @@ public class ImageProcessor extends Activity {
                     public void onClick(DialogInterface dialogInterface, int which) {
                         Dialog dialog = (Dialog) dialogInterface;
                         EditText text = (EditText) dialog.findViewById(R.id.filter_size);
-                        SharedPreferences pref = getPreferences(Context.MODE_PRIVATE);
+                        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplication());
                         SharedPreferences.Editor edit = pref.edit();
                         edit.putInt("filter_size", Integer.parseInt(text.getText().toString()));
                         edit.apply();
@@ -140,7 +141,7 @@ public class ImageProcessor extends Activity {
                 });
         final AlertDialog dialog = builder.show();
         EditText size = (EditText) dialog.findViewById(R.id.filter_size);
-        size.setText(Integer.toString(getPreferences(MODE_PRIVATE).getInt("filter_size", 1)));
+        size.setText(PreferenceManager.getDefaultSharedPreferences(this).getString("filter_size", "1"));
         size.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -177,8 +178,8 @@ public class ImageProcessor extends Activity {
 
     public void applyFilter() {
         Log.d(TAG, "Apply filter");
-        SharedPreferences pref = getPreferences(MODE_PRIVATE);
-        Filter filter = pref.getString("filter_list", "1").equals("1") ? new MeanFilter() : new MedianFilter();
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        Filter filter = pref.getString("filter_list", "0").equals("0") ? new MeanFilter() : new MedianFilter();
         BitmapDrawable drawable = (BitmapDrawable) image.getDrawable();
         (new FilterTask(filter, pref.getInt("filter_size", 1), this)).execute(drawable.getBitmap());
     }
