@@ -1,7 +1,4 @@
 package ca.afontaine.imageprocessor.app;
-
-import android.graphics.Bitmap;
-
 /**
  * @author Andrew Fontaine
  * @version 1.0

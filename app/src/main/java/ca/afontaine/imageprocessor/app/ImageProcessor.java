@@ -18,7 +18,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -141,7 +140,7 @@ public class ImageProcessor extends Activity {
                 });
         final AlertDialog dialog = builder.show();
         EditText size = (EditText) dialog.findViewById(R.id.filter_size);
-        size.setText(getPreferences(MODE_PRIVATE).getString("filter_size", "1"));
+        size.setText(Integer.toString(getPreferences(MODE_PRIVATE).getInt("filter_size", 1)));
         size.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -205,15 +204,16 @@ public class ImageProcessor extends Activity {
 
         @Override
         protected Bitmap doInBackground(Bitmap... params) {
-            Bitmap newMap = Bitmap.createBitmap(params[0]);
+            Bitmap image = params[0];
+            Bitmap newMap = Bitmap.createBitmap(image.getWidth(), image.getHeight(), Bitmap.Config.ARGB_8888);
             int[] pixels = new int[filterSize * filterSize];
 
-            for(int i = filterSize / 2; i < image.getWidth() - filterSize / 2; i++) {
-                for(int j = filterSize / 2; j < image.getHeight() - filterSize / 2; j++) {
-                    newMap.getPixels(pixels, 0, newMap.getWidth(), i, j, filterSize, filterSize);
+            for(int i = filterSize / 2 + 1 ; i < image.getWidth() - (filterSize / 2); i++) {
+                for(int j = filterSize / 2 + 1; j < image.getHeight() - (filterSize / 2); j++) {
+                    image.getPixels(pixels, 0, filterSize, i - (filterSize / 2 + 1), j - (filterSize / 2 + 1), filterSize, filterSize);
                     newMap.setPixel(i, j, filter.filter(pixels));
                 }
-                publishProgress(i);
+                publishProgress(i, image.getWidth());
                 if(isCancelled())
                     return null;
             }
@@ -230,15 +230,20 @@ public class ImageProcessor extends Activity {
                     task.cancel(false);
                 }
             });
+            pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            pd.setCancelable(true);
+            pd.show();
         }
 
 
-        protected void onPostExecute(Bitmap... images) {
-            image.setImageBitmap(images[0]);
+        protected void onPostExecute(Bitmap images) {
+            image.setImageBitmap(images);
+            pd.dismiss();
         }
 
         protected void onProgressUpdate(Integer... progress) {
             pd.setProgress(progress[0]);
+            pd.setMax(progress[1]);
         }
     }
 }

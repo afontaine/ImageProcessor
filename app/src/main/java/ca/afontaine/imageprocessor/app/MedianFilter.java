@@ -1,7 +1,5 @@
 package ca.afontaine.imageprocessor.app;
 
-import android.graphics.Bitmap;
-
 import java.util.Arrays;
 
 /**
@@ -13,6 +11,6 @@ public class MedianFilter implements Filter {
 
     public int filter(int[] pixels) {
         Arrays.sort(pixels);
-        return pixels[pixels.length/2];
+        return pixels[pixels.length/2 + 1];
     }
 }
