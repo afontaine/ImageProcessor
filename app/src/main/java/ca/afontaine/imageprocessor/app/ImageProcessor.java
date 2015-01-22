@@ -3,10 +3,14 @@ package ca.afontaine.imageprocessor.app;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -124,7 +128,7 @@ public class ImageProcessor extends Activity {
                         EditText text = (EditText) dialog.findViewById(R.id.filter_size);
                         SharedPreferences pref = getPreferences(Context.MODE_PRIVATE);
                         SharedPreferences.Editor edit = pref.edit();
-                        edit.putString("filter_size", text.getText().toString());
+                        edit.putInt("filter_size", Integer.parseInt(text.getText().toString()));
                         edit.apply();
                         applyFilter();
                     }
@@ -174,5 +178,67 @@ public class ImageProcessor extends Activity {
 
     public void applyFilter() {
         Log.d(TAG, "Apply filter");
+        SharedPreferences pref = getPreferences(MODE_PRIVATE);
+        Filter filter = pref.getString("filter_list", "1").equals("1") ? new MeanFilter() : new MedianFilter();
+        BitmapDrawable drawable = (BitmapDrawable) image.getDrawable();
+        (new FilterTask(filter, pref.getInt("filter_size", 1), this)).execute(drawable.getBitmap());
+    }
+
+    /**
+     * @author Andrew Fontaine
+     * @version 1.0
+     * @since 2015-01-21
+     */
+    public class FilterTask extends AsyncTask<Bitmap, Integer, Bitmap> {
+
+        private Filter filter;
+        private int filterSize;
+        private Context ctx;
+        private ProgressDialog pd;
+
+        public FilterTask(Filter filter, int size, Context context) {
+            super();
+            this.filter = filter;
+            this.filterSize = size;
+            ctx = context;
+        }
+
+        @Override
+        protected Bitmap doInBackground(Bitmap... params) {
+            Bitmap newMap = Bitmap.createBitmap(params[0]);
+            int[] pixels = new int[filterSize * filterSize];
+
+            for(int i = filterSize / 2; i < image.getWidth() - filterSize / 2; i++) {
+                for(int j = filterSize / 2; j < image.getHeight() - filterSize / 2; j++) {
+                    newMap.getPixels(pixels, 0, newMap.getWidth(), i, j, filterSize, filterSize);
+                    newMap.setPixel(i, j, filter.filter(pixels));
+                }
+                publishProgress(i);
+                if(isCancelled())
+                    return null;
+            }
+            return newMap;
+        }
+
+        protected void onPreExecute() {
+            final FilterTask task = this;
+            pd = new ProgressDialog(ctx);
+            pd.setMessage("Filtering...");
+            pd.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    task.cancel(false);
+                }
+            });
+        }
+
+
+        protected void onPostExecute(Bitmap... images) {
+            image.setImageBitmap(images[0]);
+        }
+
+        protected void onProgressUpdate(Integer... progress) {
+            pd.setProgress(progress[0]);
+        }
     }
 }
