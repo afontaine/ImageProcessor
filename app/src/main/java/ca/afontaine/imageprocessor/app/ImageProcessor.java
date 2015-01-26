@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 
 public class ImageProcessor extends Activity {
@@ -90,6 +91,10 @@ public class ImageProcessor extends Activity {
 
     private void chooseFilter() {
         Log.d(TAG, "Ask for filter type.");
+        if(image.getDrawable() == null) {
+            Toast.makeText(this, "You must choose an image before applying a filter", Toast.LENGTH_SHORT).show();
+            return;
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.filter_dialog)
                 .setItems(R.array.pref_list_types, new DialogInterface.OnClickListener() {
