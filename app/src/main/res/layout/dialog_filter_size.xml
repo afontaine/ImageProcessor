@@ -30,5 +30,8 @@
         android:inputType="number"
         android:ems="10"
         android:id="@+id/filter_size"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:maxLines="1" />
 </LinearLayout>

@@ -14,14 +14,9 @@
         android:positiveButtonText="@null" />
     <!-- NOTE: EditTextPreference accepts EditText attributes. -->
     <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
-    <EditTextPreference
+    <ca.afontaine.imageprocessor.app.NumberPickerDialog
     android:key="filter_size"
-    android:title="@string/pref_title_mask_size"
-    android:defaultValue="@string/pref_default_mask_size"
-    android:selectAllOnFocus="true"
-    android:inputType="number"
-    android:singleLine="true"
-    android:maxLines="1" />
+    android:defaultValue="@integer/pref_default_mask_size" />
 
 
 </PreferenceScreen>

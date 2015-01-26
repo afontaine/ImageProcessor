@@ -9,15 +9,12 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 
 public class ImageProcessor extends Activity {
@@ -115,7 +112,7 @@ public class ImageProcessor extends Activity {
         Log.d(TAG, "Ask for filter size");
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
-        builder.setTitle("Filter Size")
+        builder.setTitle(R.string.filter_size)
                 .setView(inflater.inflate(R.layout.dialog_filter_size, null))
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
@@ -137,39 +134,8 @@ public class ImageProcessor extends Activity {
                 });
         final AlertDialog dialog = builder.show();
         EditText size = (EditText) dialog.findViewById(R.id.filter_size);
-        size.setText(PreferenceManager.getDefaultSharedPreferences(this).getString("filter_size", "1"));
-        size.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                try {
-                    int size = Integer.parseInt(s.toString());
-                    if(size % 2 == 0) {
-                        Toast.makeText(getApplicationContext(), "Size must be odd.", Toast.LENGTH_SHORT).show();
-                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                        return;
-                    }
-                }
-                catch(NumberFormatException e) {
-                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                    if(s.toString().isEmpty()) {
-                        return;
-                    }
-                    Toast.makeText(getApplicationContext(), "Size must be a number.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-            }
-        });
+        size.setText(Integer.toString(PreferenceManager.getDefaultSharedPreferences(this).getInt("filter_size", 1)));
+        size.addTextChangedListener(new OddNumberTextWatcher(dialog));
     }
 
     public void applyFilter() {

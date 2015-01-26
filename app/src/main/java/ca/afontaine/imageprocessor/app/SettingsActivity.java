@@ -1,8 +1,10 @@
 package ca.afontaine.imageprocessor.app;
 
 import android.annotation.TargetApi;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.TypedArray;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -10,11 +12,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.*;
 import android.text.TextUtils;
+import android.util.AttributeSet;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
 
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -150,6 +154,8 @@ public class SettingsActivity extends PreferenceActivity {
     private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
+
+
             String stringValue = value.toString();
 
             if (preference instanceof ListPreference) {
@@ -198,10 +204,18 @@ public class SettingsActivity extends PreferenceActivity {
 
         // Trigger the listener immediately with the preference's
         // current value.
-        sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                PreferenceManager
-                        .getDefaultSharedPreferences(preference.getContext())
-                        .getString(preference.getKey(), ""));
+        if(preference instanceof NumberPickerDialog) {
+            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+                    PreferenceManager
+                            .getDefaultSharedPreferences(preference.getContext())
+                            .getInt(preference.getKey(), 1));
+        }
+        else {
+            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+                    PreferenceManager
+                            .getDefaultSharedPreferences(preference.getContext())
+                            .getString(preference.getKey(), ""));
+        }
     }
 
     /**

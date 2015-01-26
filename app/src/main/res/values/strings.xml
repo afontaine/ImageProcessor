@@ -10,5 +10,6 @@
     <string name="filter_dialog">Set Filter</string>
     <string name="apply_filter">Apply Filter</string>
     <string name="preferences">ca.afontaine.imageprocessor.preferences</string>
+    <string name="filter_size">Filter Size</string>
 
 </resources>
