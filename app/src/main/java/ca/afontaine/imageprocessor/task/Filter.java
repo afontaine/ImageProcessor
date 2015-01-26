@@ -1,4 +1,4 @@
-package ca.afontaine.imageprocessor.app;
+package ca.afontaine.imageprocessor.task;
 
 /**
  * @author Andrew Fontaine

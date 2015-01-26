@@ -1,4 +1,4 @@
-package ca.afontaine.imageprocessor.app;
+package ca.afontaine.imageprocessor.ui;
 
 import android.app.AlertDialog;
 import android.text.Editable;
@@ -10,7 +10,7 @@ import android.widget.Toast;
 * @version 1.0
 * @since 2015-01-23
 */
-class OddNumberTextWatcher implements TextWatcher {
+public class OddNumberTextWatcher implements TextWatcher {
     private final AlertDialog dialog;
 
     public OddNumberTextWatcher(AlertDialog dialog) {

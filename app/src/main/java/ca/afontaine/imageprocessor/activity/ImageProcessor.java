@@ -1,4 +1,4 @@
-package ca.afontaine.imageprocessor.app;
+package ca.afontaine.imageprocessor.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -16,6 +16,12 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+import ca.afontaine.imageprocessor.app.*;
+import ca.afontaine.imageprocessor.task.Filter;
+import ca.afontaine.imageprocessor.task.FilterTask;
+import ca.afontaine.imageprocessor.task.MeanFilter;
+import ca.afontaine.imageprocessor.task.MedianFilter;
+import ca.afontaine.imageprocessor.ui.OddNumberTextWatcher;
 
 
 public class ImageProcessor extends Activity {

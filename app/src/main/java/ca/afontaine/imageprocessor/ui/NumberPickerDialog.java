@@ -1,4 +1,4 @@
-package ca.afontaine.imageprocessor.app;
+package ca.afontaine.imageprocessor.ui;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -8,6 +8,7 @@ import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.EditText;
+import ca.afontaine.imageprocessor.app.R;
 
 /**
 * @author Andrew Fontaine

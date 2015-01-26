@@ -1,24 +1,18 @@
-package ca.afontaine.imageprocessor.app;
+package ca.afontaine.imageprocessor.activity;
 
 import android.annotation.TargetApi;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.content.res.TypedArray;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.*;
-import android.text.TextUtils;
-import android.util.AttributeSet;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
+import ca.afontaine.imageprocessor.ui.NumberPickerDialog;
+import ca.afontaine.imageprocessor.app.R;
 
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
