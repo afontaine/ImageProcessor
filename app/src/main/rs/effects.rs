@@ -36,24 +36,10 @@ uchar4 __attribute__((kernel)) swirl(uchar4 in, int x, int y) {
 	float relX = cX - x;
 	float relY = cY - y;
 	float angle = atan2(relY, relX);
-
-	// if(relX != 0) {
-	// 	angle = atan2(relY, relX);
-	// 	rsDebug("atan2 angle is: ", angle);
-	// 	if(relX > 0 && relY < 0) { angle = 2.0f * M_PI - angle; }
-	// 	else if(relX <= 0 && relY >= 0) { angle = M_PI - angle; }
-	// 	else if(relX <= 0 && relY < 0) { angle += M_PI; }
-	// }
-	// else {
-	// 	if(relY >= 0) angle = 0.5f * M_PI;
-	// 	else angle = 1.5f * M_PI;
-	// }
-
-
 	float radius = sqrt(relX * relX + relY * relY);
-	float new_angle = angle + radius / (pow(0.5, radius) + 1) * 0.03;
-	int srcX = (int) (floor(radius * cos(new_angle) + 0.5f));
-	int srcY = (int) (floor(radius * sin(new_angle) + 0.5f));
+	float new_angle = angle + radius / (pow(0.5, radius) + 1) * 0.005;
+	int srcX = (int) (radius * cos(new_angle) + 0.5f);
+	int srcY = (int) (radius * sin(new_angle) + 0.5f);
 	srcX += cX;
 	srcY += cY;
 	srcY = height - srcY;
