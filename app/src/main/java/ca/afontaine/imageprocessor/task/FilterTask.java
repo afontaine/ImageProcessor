@@ -46,6 +46,7 @@ public class FilterTask extends AsyncTask<Bitmap, Integer, Bitmap> {
         return newMap;
     }
 
+	@Override
     protected void onPreExecute() {
         final FilterTask task = this;
         pd = new ProgressDialog(ctx);
@@ -61,12 +62,13 @@ public class FilterTask extends AsyncTask<Bitmap, Integer, Bitmap> {
         pd.show();
     }
 
-
+	@Override
     protected void onPostExecute(Bitmap images) {
         image.setImageBitmap(images);
         pd.dismiss();
     }
 
+	@Override
     protected void onProgressUpdate(Integer... progress) {
         pd.setProgress(progress[0]);
         pd.setMax(progress[1]);

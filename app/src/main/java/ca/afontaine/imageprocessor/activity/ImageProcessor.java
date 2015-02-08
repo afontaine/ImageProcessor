@@ -10,7 +10,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.renderscript.Allocation;
 import android.renderscript.RenderScript;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,12 +19,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 import ca.afontaine.imageprocessor.app.*;
-import ca.afontaine.imageprocessor.task.Filter;
-import ca.afontaine.imageprocessor.task.FilterTask;
-import ca.afontaine.imageprocessor.task.MeanFilter;
-import ca.afontaine.imageprocessor.task.MedianFilter;
+import ca.afontaine.imageprocessor.task.*;
 import ca.afontaine.imageprocessor.ui.OddNumberTextWatcher;
-import ca.afontaine.imageprocessor.rs.ScriptC_effects;
 
 
 public class ImageProcessor extends Activity {
@@ -97,16 +92,8 @@ public class ImageProcessor extends Activity {
             image.setImageURI(data.getData());
 	        RenderScript rs = RenderScript.create(this);
 	        Bitmap bitmap = ((BitmapDrawable) image.getDrawable()).getBitmap();
-	        Allocation in = Allocation.createFromBitmap(rs, bitmap);
-	        Allocation out = Allocation.createTyped(rs, in.getType());
-	        ScriptC_effects scr = new ScriptC_effects(rs);
-	        scr.set_width(bitmap.getWidth());
-	        scr.set_height(bitmap.getHeight());
-	        scr.bind_input(in);
-	        scr.bind_output(out);
-	        scr.invoke_mesheye();
-	        out.copyTo(bitmap);
-	        image.setImageBitmap(bitmap);
+	        EffectTask task = new EffectTask(image, new FisheyeEffect(this), this);
+	        task.execute(bitmap);
         }
     }
 
