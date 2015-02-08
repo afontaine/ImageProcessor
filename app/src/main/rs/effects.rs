@@ -37,7 +37,7 @@ void mesheye() {
 					nny = nr * sin(theta);
 					i2 = (int) (((nnx + 1) * width) / 2.0);
 					j2 = (int) (((nny + 1) * height) / 2.0);
-					setPixelAt(i2, j2, getPixelAt(i, j));
+					setPixelAt(i, j, getPixelAt(i2, j2));
 				}
 			}
 		}
