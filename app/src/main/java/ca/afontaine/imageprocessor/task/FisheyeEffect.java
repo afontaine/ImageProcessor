@@ -47,7 +47,7 @@ public class FisheyeEffect extends Effect {
 		scr.set_width(inMap.getWidth());
 		scr.set_height(inMap.getHeight());
 		scr.bind_input(in);
-		scr.forEach_mesheye(in, out);
+		scr.forEach_fisheye(in, out);
 		out.copyTo(outMap);
 		scr.destroy();
 		rs.destroy();

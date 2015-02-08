@@ -10,7 +10,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.renderscript.RenderScript;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -90,9 +89,8 @@ public class ImageProcessor extends Activity {
         if(requestCode == GET_IMAGE) {
             Log.d(TAG, "User chose image " + data.getData());
             image.setImageURI(data.getData());
-	        RenderScript rs = RenderScript.create(this);
 	        Bitmap bitmap = ((BitmapDrawable) image.getDrawable()).getBitmap();
-	        EffectTask task = new EffectTask(image, new FisheyeEffect(this), this);
+	        EffectTask task = new EffectTask(image, new SwirlEffect(this), this);
 	        task.execute(bitmap);
         }
     }
