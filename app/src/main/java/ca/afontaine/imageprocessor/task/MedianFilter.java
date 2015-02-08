@@ -14,10 +14,10 @@ import java.util.List;
 public class MedianFilter implements Filter {
 
     public int filter(int[] pixels) {
-        List<Integer> red = new ArrayList<>();
-        List<Integer> green = new ArrayList<>();
-        List<Integer> blue = new ArrayList<>();
-        List<Integer> alpha = new ArrayList<>();
+        List<Integer> red = new ArrayList<Integer>();
+        List<Integer> green = new ArrayList<Integer>();
+        List<Integer> blue = new ArrayList<Integer>();
+        List<Integer> alpha = new ArrayList<Integer>();
         for(int i : pixels) {
             red.add(Color.red(i));
             blue.add(Color.blue(i));
