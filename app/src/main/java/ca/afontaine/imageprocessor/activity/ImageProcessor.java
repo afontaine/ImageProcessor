@@ -7,9 +7,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,12 +30,19 @@ import ca.afontaine.imageprocessor.filter.MeanFilter;
 import ca.afontaine.imageprocessor.filter.MedianFilter;
 import ca.afontaine.imageprocessor.ui.OddNumberTextWatcher;
 
+import java.io.File;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 
 public class ImageProcessor extends Activity {
 
     private static final String TAG = "ImageProcessor";
     private static final int GET_IMAGE = 1;
+	private static final int GET_CAMERA = 2;
 
+	private Uri newImage;
     private ImageView image;
 
     @Override
@@ -62,6 +73,9 @@ public class ImageProcessor extends Activity {
             case R.id.image:
                 setImage();
                 break;
+	        case R.id.camera:
+		        setCamera();
+		        break;
             case R.id.action_settings:
                 goToSettings();
                 break;
@@ -81,6 +95,21 @@ public class ImageProcessor extends Activity {
         startActivityForResult(intent, GET_IMAGE);
     }
 
+	private void setCamera() {
+		Log.d(TAG, "User is taking new image.");
+		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		File picDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+				"ImageProcessor");
+		if(!picDir.exists()) picDir.mkdirs();
+		File pic = new File(picDir.getPath(),File.separator +
+				"Image_" + new SimpleDateFormat("yyyy-MM-ddHH_mm_ss").format(Calendar.getInstance().getTime()) +
+				".jpeg");
+		newImage = Uri.fromFile(pic);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, newImage);
+		if(intent.resolveActivity(getPackageManager()) != null)
+			startActivityForResult(intent, GET_CAMERA);
+	}
+
     private void goToSettings() {
         Log.d(TAG, "User is going to settings.");
         Intent intent = new Intent();
@@ -96,10 +125,12 @@ public class ImageProcessor extends Activity {
         if(requestCode == GET_IMAGE) {
             Log.d(TAG, "User chose image " + data.getData());
             image.setImageURI(data.getData());
-	        Bitmap bitmap = ((BitmapDrawable) image.getDrawable()).getBitmap();
-	        EffectTask task = new EffectTask(image, new WaveEffect(this), this);
-	        task.execute(bitmap);
         }
+	    if(requestCode == GET_CAMERA) {
+		    Log.d(TAG, "User took new photo");
+		    if(newImage != null)
+			    image.setImageURI(newImage);
+	    }
     }
 
     private void chooseFilter() {
