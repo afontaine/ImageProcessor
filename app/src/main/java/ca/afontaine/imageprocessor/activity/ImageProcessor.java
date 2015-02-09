@@ -32,14 +32,16 @@ public class ImageProcessor extends Activity {
     private static final String TAG = "ImageProcessor";
     private static final int GET_IMAGE = 1;
 
-    ImageView image;
+    private ImageView image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_processor);
-
         image = (ImageView) findViewById(R.id.imageView);
+	    if(getIntent().getData() != null) {
+		    image.setImageURI(getIntent().getData());
+	    }
 
     }
 
