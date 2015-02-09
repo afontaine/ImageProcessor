@@ -133,6 +133,7 @@ public class ImageProcessor extends Activity implements OnGestureListener {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
+	    newImage = null;
         startActivityForResult(intent, GET_IMAGE);
     }
 
@@ -213,7 +214,6 @@ public class ImageProcessor extends Activity implements OnGestureListener {
 				save.setEnabled(false);
 			}
 		}).run();
-
 	}
 
     @Override
