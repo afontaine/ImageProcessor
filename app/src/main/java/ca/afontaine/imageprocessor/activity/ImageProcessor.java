@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -22,7 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-import ca.afontaine.imageprocessor.app.*;
+import ca.afontaine.imageprocessor.app.R;
 import ca.afontaine.imageprocessor.effect.EffectTask;
 import ca.afontaine.imageprocessor.effect.FisheyeEffect;
 import ca.afontaine.imageprocessor.effect.SwirlEffect;
@@ -32,15 +31,15 @@ import ca.afontaine.imageprocessor.filter.FilterTask;
 import ca.afontaine.imageprocessor.filter.MeanFilter;
 import ca.afontaine.imageprocessor.filter.MedianFilter;
 import ca.afontaine.imageprocessor.ui.OddNumberTextWatcher;
-import org.apache.http.util.ByteArrayBuffer;
 
-import java.io.*;
-import java.nio.ByteBuffer;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
 import java.util.Calendar;
 import java.util.Deque;
-import java.util.Stack;
 
 
 public class ImageProcessor extends Activity implements OnGestureListener {

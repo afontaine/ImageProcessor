@@ -6,11 +6,10 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.*;
-import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
-import ca.afontaine.imageprocessor.ui.NumberPickerDialog;
+import android.view.MenuItem;
 import ca.afontaine.imageprocessor.app.R;
-
+import ca.afontaine.imageprocessor.ui.NumberPickerDialog;
 
 import java.util.List;
 
