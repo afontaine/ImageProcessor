@@ -15,14 +15,14 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.*;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 import ca.afontaine.imageprocessor.app.*;
 import ca.afontaine.imageprocessor.effect.EffectTask;
+import ca.afontaine.imageprocessor.effect.FisheyeEffect;
+import ca.afontaine.imageprocessor.effect.SwirlEffect;
 import ca.afontaine.imageprocessor.effect.WaveEffect;
 import ca.afontaine.imageprocessor.filter.Filter;
 import ca.afontaine.imageprocessor.filter.FilterTask;
@@ -36,7 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 
-public class ImageProcessor extends Activity {
+public class ImageProcessor extends Activity implements OnGestureListener {
 
     private static final String TAG = "ImageProcessor";
     private static final int GET_IMAGE = 1;
@@ -44,17 +44,28 @@ public class ImageProcessor extends Activity {
 
 	private Uri newImage;
     private ImageView image;
+	private Gesture gesture;
+	private GestureDetector gestureDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_processor);
+	    gesture = new Gesture();
+	    gesture.addListener(this);
+	    gestureDetector = new GestureDetector(this, gesture);
         image = (ImageView) findViewById(R.id.imageView);
 	    if(getIntent().getData() != null) {
 		    image.setImageURI(getIntent().getData());
 	    }
 
     }
+
+	@Override
+	public boolean onTouchEvent(MotionEvent e) {
+		gestureDetector.onTouchEvent(e);
+		return super.onTouchEvent(e);
+	}
 
 
     @Override
@@ -191,8 +202,25 @@ public class ImageProcessor extends Activity {
         Log.d(TAG, "Apply filter");
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         Filter filter = pref.getString("filter_list", "0").equals("0") ? new MeanFilter() : new MedianFilter();
-        BitmapDrawable drawable = (BitmapDrawable) image.getDrawable();
-        (new FilterTask(image, filter, pref.getInt("filter_size", 1), this)).execute(drawable.getBitmap());
+	    (new FilterTask(image, filter, pref.getInt("filter_size", 1), this)).execute(getBitmap());
     }
 
+	protected Bitmap getBitmap() {
+		return ((BitmapDrawable) image.getDrawable()).getBitmap();
+	}
+
+	@Override
+	public void onFling() {
+		new EffectTask(image, new WaveEffect(this), this).execute(getBitmap());
+	}
+
+	@Override
+	public void onLongPress() {
+		new EffectTask(image, new FisheyeEffect(this), this).execute(getBitmap());
+	}
+
+	@Override
+	public void onDoublePress() {
+		new EffectTask(image, new SwirlEffect(this), this).execute(getBitmap());
+	}
 }
