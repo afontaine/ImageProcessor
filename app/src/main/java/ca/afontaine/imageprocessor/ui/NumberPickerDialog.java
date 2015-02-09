@@ -18,13 +18,12 @@ import ca.afontaine.imageprocessor.app.R;
 public class NumberPickerDialog extends DialogPreference {
 
     private int value;
-    private EditText size;
+    protected EditText size;
     static int DEFAULT_VALUE = 1;
 
     public NumberPickerDialog(Context ctx, AttributeSet attr) {
         super(ctx,attr);
         setDialogLayoutResource(R.layout.dialog_filter_size);
-        setTitle(R.string.filter_size);
         setPositiveButtonText("OK");
         setNegativeButtonText("Cancel");
 

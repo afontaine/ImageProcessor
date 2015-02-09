@@ -98,6 +98,7 @@ public class SettingsActivity extends PreferenceActivity {
         // to reflect the new value, per the Android Design guidelines.
         bindPreferenceSummaryToValue(findPreference("filter_size"));
         bindPreferenceSummaryToValue(findPreference("filter_list"));
+	    bindPreferenceSummaryToValue(findPreference("undo_size"));
     }
 
     /**
@@ -167,8 +168,8 @@ public class SettingsActivity extends PreferenceActivity {
             }
             else if (preference instanceof EditTextPreference) {
                 try {
-                    int size = Integer.parseInt(stringValue);
-                    return (size % 2 != 0);
+                    Integer.parseInt(stringValue);
+                    return true;
                 }
                 catch(NumberFormatException e) {
                     return false;

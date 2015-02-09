@@ -3,12 +3,14 @@ package ca.afontaine.imageprocessor.activity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -16,6 +18,7 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.*;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -29,11 +32,15 @@ import ca.afontaine.imageprocessor.filter.FilterTask;
 import ca.afontaine.imageprocessor.filter.MeanFilter;
 import ca.afontaine.imageprocessor.filter.MedianFilter;
 import ca.afontaine.imageprocessor.ui.OddNumberTextWatcher;
+import org.apache.http.util.ByteArrayBuffer;
 
-import java.io.File;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
+import java.util.ArrayDeque;
 import java.util.Calendar;
+import java.util.Deque;
+import java.util.Stack;
 
 
 public class ImageProcessor extends Activity implements OnGestureListener {
@@ -46,6 +53,9 @@ public class ImageProcessor extends Activity implements OnGestureListener {
     private ImageView image;
 	private Gesture gesture;
 	private GestureDetector gestureDetector;
+	private Deque<Bitmap> undoStack;
+	private Button undo;
+	private Button save;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,17 +65,38 @@ public class ImageProcessor extends Activity implements OnGestureListener {
 	    gesture.addListener(this);
 	    gestureDetector = new GestureDetector(this, gesture);
         image = (ImageView) findViewById(R.id.imageView);
+	    image.setOnTouchListener(new View.OnTouchListener() {
+		    @Override
+		    public boolean onTouch(View v, MotionEvent event) {
+			    return gestureDetector.onTouchEvent(event);
+		    }
+	    });
+	    undoStack = new ArrayDeque<Bitmap>();
 	    if(getIntent().getData() != null) {
 		    image.setImageURI(getIntent().getData());
 	    }
+	    save = (Button) findViewById(R.id.save);
+	    save.setOnClickListener(new View.OnClickListener() {
+		    @Override
+		    public void onClick(View v) {
+			    saveImage();
+		    }
+	    });
+	    save.setEnabled(false);
+
+	    undo = (Button) findViewById(R.id.undo);
+	    undo.setOnClickListener(new View.OnClickListener() {
+		    @Override
+		    public void onClick(View v) {
+			    if(undoStack.peek() != null)
+				    image.setImageBitmap(undoStack.removeLast());
+			    if(undoStack.peek() == null)
+				    undo.setEnabled(false);
+		    }
+	    });
+	    undo.setEnabled(false);
 
     }
-
-	@Override
-	public boolean onTouchEvent(MotionEvent e) {
-		gestureDetector.onTouchEvent(e);
-		return super.onTouchEvent(e);
-	}
 
 
     @Override
@@ -109,6 +140,13 @@ public class ImageProcessor extends Activity implements OnGestureListener {
 	private void setCamera() {
 		Log.d(TAG, "User is taking new image.");
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		getImageFile();
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, newImage);
+		if(intent.resolveActivity(getPackageManager()) != null)
+			startActivityForResult(intent, GET_CAMERA);
+	}
+
+	private void getImageFile() {
 		File picDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
 				"ImageProcessor");
 		if(!picDir.exists()) picDir.mkdirs();
@@ -116,17 +154,68 @@ public class ImageProcessor extends Activity implements OnGestureListener {
 				"Image_" + new SimpleDateFormat("yyyy-MM-ddHH_mm_ss").format(Calendar.getInstance().getTime()) +
 				".jpeg");
 		newImage = Uri.fromFile(pic);
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, newImage);
-		if(intent.resolveActivity(getPackageManager()) != null)
-			startActivityForResult(intent, GET_CAMERA);
 	}
 
-    private void goToSettings() {
+	private void goToSettings() {
         Log.d(TAG, "User is going to settings.");
         Intent intent = new Intent();
         intent.setClass(this, SettingsActivity.class);
         startActivity(intent);
     }
+
+	@Override
+	public void onBackPressed() {
+		if(save.isEnabled()) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Hold on!")
+					.setMessage("Would you like to save before leaving?")
+					.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							saveImage();
+							backPressed();
+						}
+					})
+					.setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							backPressed();
+						}
+					}).show();
+		}
+	}
+
+	public void backPressed() {
+		super.onBackPressed();
+	}
+
+	private void saveImage() {
+		if(newImage == null)
+			getImageFile();
+		final Context ctx = this;
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Bitmap image = getBitmap();
+				OutputStream out;
+				try {
+					out = getContentResolver().openOutputStream(newImage);
+					image.compress(Bitmap.CompressFormat.JPEG, 80, out);
+					out.flush();
+					out.close();
+					MediaScannerConnection.scanFile(ctx, new String[]{newImage.getPath()}, null, null);
+				}
+				catch(FileNotFoundException e) {
+					Log.e(TAG, "File not found for saving", e);
+				}
+				catch(IOException e) {
+					Log.e(TAG, "IOException when saving", e);
+				}
+				save.setEnabled(false);
+			}
+		}).run();
+
+	}
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -142,6 +231,9 @@ public class ImageProcessor extends Activity implements OnGestureListener {
 		    if(newImage != null)
 			    image.setImageURI(newImage);
 	    }
+	    undoStack = new ArrayDeque<Bitmap>();
+	    undo.setEnabled(false);
+	    save.setEnabled(false);
     }
 
     private void chooseFilter() {
@@ -211,16 +303,29 @@ public class ImageProcessor extends Activity implements OnGestureListener {
 
 	@Override
 	public void onFling() {
+		addUndo();
 		new EffectTask(image, new WaveEffect(this), this).execute(getBitmap());
 	}
 
 	@Override
 	public void onLongPress() {
+		addUndo();
 		new EffectTask(image, new FisheyeEffect(this), this).execute(getBitmap());
 	}
 
 	@Override
 	public void onDoublePress() {
+		addUndo();
 		new EffectTask(image, new SwirlEffect(this), this).execute(getBitmap());
 	}
+
+	protected void addUndo() {
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplication());
+		if(undoStack.size() >= pref.getInt("undo_size", 3))
+			undoStack.removeFirst();
+		undoStack.addLast(getBitmap());
+		undo.setEnabled(true);
+		save.setEnabled(true);
+	}
+
 }

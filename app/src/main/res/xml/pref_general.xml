@@ -14,9 +14,17 @@
         android:positiveButtonText="@null" />
     <!-- NOTE: EditTextPreference accepts EditText attributes. -->
     <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
-    <ca.afontaine.imageprocessor.ui.NumberPickerDialog
-    android:key="filter_size"
-    android:defaultValue="@integer/pref_default_mask_size" />
+    <ca.afontaine.imageprocessor.ui.OddNumberPickerDialog
+        android:key="filter_size"
+        android:defaultValue="@integer/pref_default_mask_size"
+        android:title="Filter Size" />
+
+    <ca.afontaine.imageprocessor.ui.MaxNumberPickerDialog
+        android:key="undo_size"
+        android:title="Undo Size"
+        android:defaultValue="@integer/pref_default_undo_size" />
+
+
 
 
 </PreferenceScreen>
