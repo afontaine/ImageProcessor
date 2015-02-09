@@ -12,5 +12,7 @@
     <string name="preferences">ca.afontaine.imageprocessor.preferences</string>
     <string name="filter_size">Filter Size</string>
     <string name="camera">Camera</string>
+    <string name="save">Save</string>
+    <string name="undo">Undo</string>
 
 </resources>

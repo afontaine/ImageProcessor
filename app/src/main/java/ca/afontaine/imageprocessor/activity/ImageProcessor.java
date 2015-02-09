@@ -51,7 +51,7 @@ public class ImageProcessor extends Activity implements OnGestureListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_processor);
-	    gesture = new Gesture();
+	    gesture = new Gesture(this);
 	    gesture.addListener(this);
 	    gestureDetector = new GestureDetector(this, gesture);
         image = (ImageView) findViewById(R.id.imageView);

@@ -23,6 +23,7 @@
 package ca.afontaine.imageprocessor.activity;
 
 import android.content.Context;
+import android.os.Vibrator;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
@@ -37,11 +38,14 @@ import java.util.List;
 public class Gesture implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener{
 
 	private static final String TAG = "Gesture";
+	private static final int VIBE = 200;
 
 	private List<OnGestureListener> listeners;
+	private Vibrator vibe;
 
-	public Gesture() {
+	public Gesture(Context ctx) {
 		listeners = new ArrayList<OnGestureListener>();
+		vibe = (Vibrator) ctx.getSystemService(Context.VIBRATOR_SERVICE);
 	}
 
 	public void addListener(OnGestureListener listner) {
@@ -59,6 +63,7 @@ public class Gesture implements GestureDetector.OnGestureListener, GestureDetect
 
 	@Override
 	public boolean onDoubleTap(MotionEvent e) {
+		vibe.vibrate(VIBE);
 		for(OnGestureListener listener : listeners) {
 			listener.onDoublePress();
 		}
@@ -92,6 +97,7 @@ public class Gesture implements GestureDetector.OnGestureListener, GestureDetect
 
 	@Override
 	public void onLongPress(MotionEvent e) {
+		vibe.vibrate(VIBE);
 		for(OnGestureListener listener : listeners) {
 			listener.onLongPress();
 		}
@@ -99,6 +105,7 @@ public class Gesture implements GestureDetector.OnGestureListener, GestureDetect
 
 	@Override
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+		vibe.vibrate(VIBE);
 		for(OnGestureListener listener : listeners) {
 			listener.onFling();
 		}
