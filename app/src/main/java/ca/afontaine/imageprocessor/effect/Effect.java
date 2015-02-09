@@ -20,11 +20,12 @@
  * SOFTWARE.
  */
 
-package ca.afontaine.imageprocessor.task;
+package ca.afontaine.imageprocessor.effect;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.renderscript.Allocation;
+import android.renderscript.RenderScript;
 import ca.afontaine.imageprocessor.rs.ScriptC_effects;
 
 /**
@@ -32,25 +33,32 @@ import ca.afontaine.imageprocessor.rs.ScriptC_effects;
  * @version 1.0
  * @since 2015-02-08
  */
-public class FisheyeEffect extends Effect {
+public abstract class Effect {
+
+	Context cxt;
+	RenderScript rs;
+	ScriptC_effects scr;
 
 
-	public FisheyeEffect(Context ctx) {
-		super(ctx);
+	public Effect(Context ctx) {
+		this.cxt = ctx;
+		rs = RenderScript.create(ctx);
+		scr = new ScriptC_effects(rs);
 	}
 
-	@Override
+
 	public Bitmap effect(Bitmap inMap, Bitmap outMap) {
 		Allocation in = Allocation.createFromBitmap(rs, inMap);
 		Allocation out = Allocation.createTyped(rs, in.getType());
-		ScriptC_effects scr = new ScriptC_effects(rs);
 		scr.set_width(inMap.getWidth());
 		scr.set_height(inMap.getHeight());
 		scr.bind_input(in);
-		scr.forEach_fisheye(in, out);
+		apply(in, out);
 		out.copyTo(outMap);
 		scr.destroy();
 		rs.destroy();
 		return outMap;
 	}
+
+	protected abstract void apply(Allocation in, Allocation out);
 }

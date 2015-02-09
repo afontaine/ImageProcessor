@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package ca.afontaine.imageprocessor.task;
+package ca.afontaine.imageprocessor.effect;
 
 import android.app.ProgressDialog;
 import android.content.Context;

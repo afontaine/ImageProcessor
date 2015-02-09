@@ -46,6 +46,14 @@ uchar4 __attribute__((kernel)) swirl(uchar4 in, int x, int y) {
 	return getPixelAt(srcX, srcY);
 }
 
+uchar4 __attribute((kernel)) wave(uchar4 in, int x, int y) {
+	float x_sine = 2 * M_PI * 3 / height * y;
+	float y_sine = 2 * M_PI * 3 / width * x;
+	int nX = (width / 10) * sin(x_sine) + x;
+	int nY = (height / 10) * sin(y_sine) + y;
+	return getPixelAt(nX, nY);
+}
+
 //a convenience method to clamp getting pixels into the image
 static uchar4 getPixelAt(int x, int y) {
 	if(y>=height) y = height-1;

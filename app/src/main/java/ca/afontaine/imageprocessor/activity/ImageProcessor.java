@@ -18,7 +18,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 import ca.afontaine.imageprocessor.app.*;
-import ca.afontaine.imageprocessor.task.*;
+import ca.afontaine.imageprocessor.effect.EffectTask;
+import ca.afontaine.imageprocessor.effect.WaveEffect;
+import ca.afontaine.imageprocessor.filter.Filter;
+import ca.afontaine.imageprocessor.filter.FilterTask;
+import ca.afontaine.imageprocessor.filter.MeanFilter;
+import ca.afontaine.imageprocessor.filter.MedianFilter;
 import ca.afontaine.imageprocessor.ui.OddNumberTextWatcher;
 
 
@@ -90,7 +95,7 @@ public class ImageProcessor extends Activity {
             Log.d(TAG, "User chose image " + data.getData());
             image.setImageURI(data.getData());
 	        Bitmap bitmap = ((BitmapDrawable) image.getDrawable()).getBitmap();
-	        EffectTask task = new EffectTask(image, new SwirlEffect(this), this);
+	        EffectTask task = new EffectTask(image, new WaveEffect(this), this);
 	        task.execute(bitmap);
         }
     }

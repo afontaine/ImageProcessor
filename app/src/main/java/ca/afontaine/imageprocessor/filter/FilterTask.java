@@ -1,4 +1,4 @@
-package ca.afontaine.imageprocessor.task;
+package ca.afontaine.imageprocessor.filter;
 
 import android.app.ProgressDialog;
 import android.content.Context;

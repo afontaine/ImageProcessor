@@ -20,36 +20,23 @@
  * SOFTWARE.
  */
 
-package ca.afontaine.imageprocessor.task;
+package ca.afontaine.imageprocessor.effect;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.renderscript.Allocation;
-import ca.afontaine.imageprocessor.rs.ScriptC_effects;
 
 /**
  * @author Andrew Fontaine
  * @version 1.0
  * @since 2015-02-08
  */
-public class SwirlEffect extends Effect {
+public class WaveEffect extends Effect {
 
-	public SwirlEffect(Context ctx) {
+	public WaveEffect(Context ctx) {
 		super(ctx);
 	}
 
-	@Override
-	public Bitmap effect(Bitmap inMap, Bitmap outMap) {
-		Allocation in = Allocation.createFromBitmap(rs, inMap);
-		Allocation out = Allocation.createTyped(rs, in.getType());
-		ScriptC_effects scr = new ScriptC_effects(rs);
-		scr.set_width(inMap.getWidth());
-		scr.set_height(inMap.getHeight());
-		scr.bind_input(in);
-		scr.forEach_swirl(in, out);
-		out.copyTo(outMap);
-		scr.destroy();
-		rs.destroy();
-		return outMap;
+	protected void apply(Allocation in, Allocation out) {
+		scr.forEach_wave(in, out);
 	}
 }

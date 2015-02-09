@@ -20,28 +20,24 @@
  * SOFTWARE.
  */
 
-package ca.afontaine.imageprocessor.task;
+package ca.afontaine.imageprocessor.effect;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.renderscript.RenderScript;
+import android.renderscript.Allocation;
 
 /**
  * @author Andrew Fontaine
  * @version 1.0
  * @since 2015-02-08
  */
-public abstract class Effect {
+public class SwirlEffect extends Effect {
 
-	Context cxt;
-	RenderScript rs;
-
-
-	public Effect(Context ctx) {
-		this.cxt = ctx;
-		rs = RenderScript.create(ctx);
+	public SwirlEffect(Context ctx) {
+		super(ctx);
 	}
 
-
-	public abstract Bitmap effect(Bitmap inMap, Bitmap outMap);
+	@Override
+	protected void apply(Allocation in, Allocation out) {
+		scr.forEach_swirl(in, out);
+	}
 }
